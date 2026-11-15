@@ -1,0 +1,42 @@
+{% extends "admin/base.html" %}
+{% block extrahead %}
+<style>
+  :root {
+    --primary: #0B6E4F;
+    --accent: #FF7A00;
+  }
+  #header {
+    background: #0B6E4F !important;
+    color: white !important;
+  }
+  #header a, #header a:visited {
+    color: white !important;
+    font-weight: 700;
+    font-size: 20px;
+  }
+  #branding h1 {
+    font-weight: 800;
+    letter-spacing: 1px;
+  }
+  .module h2, .module caption, .inline-group h2 {
+    background: #0B6E4F !important;
+    color: white !important;
+  }
+  div.breadcrumbs {
+    background: #FF7A00 !important;
+    color: white !important;
+  }
+  div.breadcrumbs a { color: white !important; }
+  .button, input[type=submit], input[type=button], .submit-row input {
+    background: #FF7A00 !important;
+    color: white !important;
+    border-radius: 8px !important;
+    font-weight: 700 !important;
+  }
+  a.button { background: #0B6E4F !important; }
+</style>
+{% endblock %}
+
+{% block branding %}
+<h1 id="site-name"><a href="{% url 'admin:index' %}">🚐 WARENG Admin</a></h1>
+{% endblock %}
