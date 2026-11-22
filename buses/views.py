@@ -79,6 +79,8 @@ class BookingViewSet(viewsets.ModelViewSet):
         r = requests.post(f"{base}/mpesa/stkpush/v1/processrequest", json=payload, headers=headers, timeout=30)
         data = r.json()
         if r.status_code == 200 and data.get("ResponseCode") == "0":
+            booking.checkout_request_id = data.get("CheckoutRequestID")
+            booking.save()
             return Response({"message": "STK push sent", "checkout_id": data.get("CheckoutRequestID"), "data": data})
         return Response({"error": "STK push failed", "data": data}, status=400)
 
@@ -87,4 +89,36 @@ class BookingViewSet(viewsets.ModelViewSet):
 @permission_classes([AllowAny])
 def mpesa_callback(request):
     print("MPESA CALLBACK:", request.data)
+    try:
+        data = request.data
+        stk = data.get("Body", {}).get("stkCallback", {})
+        result_code = stk.get("ResultCode")
+        checkout_id = stk.get("CheckoutRequestID")
+        # AccountReference was WARENG-<id>, but we find booking by checkout_id first
+        # fallback: try to get booking id from MerchantRequestID? use checkout_id stored in pay()
+        booking = None
+        if checkout_id:
+            booking = Booking.objects.filter(checkout_request_id=checkout_id).first()
+        if not booking:
+            # Last resort: try to parse from ResultDesc / metadata - skip
+            print("Callback: booking not found for", checkout_id)
+            return JsonResponse({"ResultCode": 0, "ResultDesc": "Accepted"})
+
+        if result_code == 0:
+            # Success - get receipt
+            receipt = ""
+            items = stk.get("CallbackMetadata", {}).get("Item", [])
+            for item in items:
+                if item.get("Name") == "MpesaReceiptNumber":
+                    receipt = item.get("Value")
+            booking.payment_status = "PAID"
+            booking.mpesa_receipt = receipt
+            booking.save()
+            print(f"Booking {booking.id} marked PAID, receipt {receipt}")
+        else:
+            booking.payment_status = "FAILED"
+            booking.save()
+            print(f"Booking {booking.id} marked FAILED, code {result_code}")
+    except Exception as e:
+        print("Callback error:", e)
     return JsonResponse({"ResultCode": 0, "ResultDesc": "Accepted"})
