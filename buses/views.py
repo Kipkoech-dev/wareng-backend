@@ -27,7 +27,7 @@ def get_mpesa_token():
 \
 \
 
-lass BusViewSet(viewsets.ModelViewSet):
+class BusViewSet(viewsets.ModelViewSet):
     queryset = Bus.objects.all()
     serializer_class = BusSerializer
 
