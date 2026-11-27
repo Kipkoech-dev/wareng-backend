@@ -24,6 +24,9 @@ class Booking(models.Model):
     booking_date = models.DateTimeField(auto_now_add=True)
     booking_time = models.DateTimeField(auto_now_add=True)
     total_amount = models.DecimalField(max_digits=10, decimal_places=2)
+    payment_status = models.CharField(max_length=20, default='pending')
+    mpesa_code = models.CharField(max_length=20, blank=True, default="")
+    checkout_request_id = models.CharField(max_length=100, blank=True, default="")
 
     def __str__(self):
         return f"{self.passenger_name} - {self.passenger_phone}"

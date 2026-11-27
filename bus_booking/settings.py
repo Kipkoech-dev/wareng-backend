@@ -133,3 +133,9 @@ MAILERS = {
     },
 }
 CORS_ALLOW_ALL_ORIGINS = True
+# M-Pesa Daraja - Sandbox
+MPESA_CONSUMER_KEY = 'nhRpbMLMeoTSJh3dO8XyQt7Y6MTcAJc09uAvnIRPsU4Rm3dL'
+MPESA_CONSUMER_SECRET = 'qhXzdcxEeYa85k6Drar5GAMXm5QgKzLxhPzaQgrfSxwGAYRqRHnTBUvN4AcbG7bM'
+MPESA_SHORTCODE = '174379'
+MPESA_PASSKEY = 'bfb279f9aa9bdbcf158e97dd71a467cd2e0c893059b10f78e6b72ada1ed2c919'
+MPESA_CALLBACK_URL = 'https://wareng-backend.onrender.com/api/mpesa/callback/'
